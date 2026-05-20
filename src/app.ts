@@ -6,6 +6,7 @@ import express, {
 import { userRoute } from "./modules/user/user.auth";
 import cors from 'cors'
 import { issueRoute } from "./modules/issue/issue.route";
+import { authRoute } from "./modules/auth/auth.route";
 const app: Application = express();
 
 const corsOptions = {
@@ -25,6 +26,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/api/auth",userRoute)
+app.use("/api/auth",authRoute)
 app.use("/api/issues",issueRoute)
 
 
