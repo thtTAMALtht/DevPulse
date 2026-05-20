@@ -6,39 +6,43 @@ import { pool } from "../../db";
 
 const authMiddleware = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
-    //check token exists
-    if (!token) {
-      sendResponse(res, {
-        statusCode: 401,
-        success: false,
-        message: "Unauthorized access!",
-      });
-    }
+    try {
+      const token = req.headers.authorization;
+      //check token exists
+      if (!token) {
+        sendResponse(res, {
+          statusCode: 401,
+          success: false,
+          message: "Unauthorized access!",
+        });
+      }
 
-    //verify token
-    const decoded = jwt.verify(
-      token as string,
-      config.accessTokenSecret as string,
-    ) as JwtPayload;
+      //verify token
+      const decoded = jwt.verify(
+        token as string,
+        config.accessTokenSecret as string,
+      ) as JwtPayload;
 
-    //find user in the database
-    const userData = await pool.query(
-      `
+      //find user in the database
+      const userData = await pool.query(
+        `
        SELECT * FROM users WHERE email = $1 
         `,
-      [decoded.email],
-    );
+        [decoded.email],
+      );
 
-    const user = userData.rows[0];
+      const user = userData.rows[0];
 
-    if (userData.rows.length === 0) {
-      throw new Error("user not found");
+      if (userData.rows.length === 0) {
+        throw new Error("user not found");
+      }
+
+      req.user = decoded;
+
+      next();
+    } catch (error) {
+      next(error);
     }
-
-    req.user =  decoded
-
-    next();
   };
 };
 

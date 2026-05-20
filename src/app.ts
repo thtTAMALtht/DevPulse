@@ -7,6 +7,8 @@ import { userRoute } from "./modules/user/user.auth";
 import cors from 'cors'
 import { issueRoute } from "./modules/issue/issue.route";
 import { authRoute } from "./modules/auth/auth.route";
+import globalErrorHandler from "./modules/middleware/globalErrorHandler";
+
 const app: Application = express();
 
 const corsOptions = {
@@ -29,5 +31,7 @@ app.use("/api/auth",userRoute)
 app.use("/api/auth",authRoute)
 app.use("/api/issues",issueRoute)
 
+//global erro handler middleware
+app.use(globalErrorHandler)
 
 export default app;
