@@ -11,7 +11,6 @@ const loginUser = async (req: Request, res: Response) => {
       message: "Login successful",
       data: result,
     });
-    console.log('authcontroller',result)
   } catch (error: unknown) {
     let message = "Something went wrong";
 
