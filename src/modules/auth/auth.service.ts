@@ -19,7 +19,6 @@ const loginUserIntoDB = async (payload: IAuth) => {
 
   //Compare the password
   const user = userData.rows[0];
-  console.log(user);
 
   const matchPassword = await bcrypt.compare(password, user.password);
   if (!matchPassword) {
@@ -36,7 +35,17 @@ const loginUserIntoDB = async (payload: IAuth) => {
   const accessToken = jwt.sign(jwtPayload, config.accessTokenSecret as string, {
     expiresIn: "3h",
   });
-  return { accessToken };
+  return {
+    token: accessToken,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    },
+  };
 };
 
 export const authService = {

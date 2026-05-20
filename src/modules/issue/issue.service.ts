@@ -1,25 +1,14 @@
 import { pool } from "../../db";
+import type { Iissue } from "./issue.interface";
 
-const createIssueIntoDB = async (payload: any) => {
-  const { title, description, type, status, reporter_id } = payload;
-
-  const user = await pool.query(
-    `
-    SELECT * FROM users WHERE id=$1
-    
-    `,
-    [reporter_id],
-  );
- 
-  if (user.rows.length === 0) {
-    throw new Error("user not exist");
-  }
+const createIssueIntoDB = async (payload: Iissue, userId: number) => {
+  const { title, description, type, status } = payload;
 
   const result = await pool.query(
     `
         INSERT INTO issues(title,description,type,status,reporter_id)VALUES($1,$2,$3,COALESCE($4,'open'),$5) RETURNING *
         `,
-    [title, description, type, status, reporter_id],
+    [title, description, type, status, userId],
   );
   return result;
 };
